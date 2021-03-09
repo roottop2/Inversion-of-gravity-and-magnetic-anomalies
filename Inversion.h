@@ -9,15 +9,10 @@
 double Matrix_multiplication(double* matrix_1, double* matrix_2, double* output_matrix, int line1, int column1，int line2, int column2)
 {
 	int i, j, k;
-	double sum = 0;
-        for (i = 0; i < line; i++)
+        for (i = 0; i < line1; i++)
 		for (j = 0; j < column2; j++)
 			for (k = 0; k < column1; k++)
-			{
-                                sum += *(matrix_1 + i * column1 + k) * *(matrix_2 + k * column2 + j);
-	                 	*(output_matrix + i * column2 + j) = sum;
-		                sum = 0;
-		        }
+                                *(output_matrix + i * column2 + j) += *(matrix_1 + i * column1 + k) * *(matrix_2 + k * column2 + j);
 	return 0;
 }
 //A正演矩阵
