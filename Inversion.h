@@ -3,64 +3,61 @@
 #include<math.h>
 #include<stdlib.h>
 #include<string.h>
-//ÆÊ·ÖÍø¸ñ¸öÊý 20*20*10
-//³¤¶ÈDX=DY=DZ=100;
+//å‰–åˆ†ç½‘æ ¼ä¸ªæ•° 20*20*10
+//é•¿åº¦DX=DY=DZ=100;
 //
-double Matrix_multiplication(double* matrix_1, double* matrix_2, double* output_matrix, int line, int column)
+double Matrix_multiplication(double* matrix_1, double* matrix_2, double* output_matrix, int line1, int column1ï¼Œint line2, int column2)
 {
-	int s = 0, i, j;
+	int i, j, k;
 	double sum = 0;
-	do
-	{
-		for (i = 0; i < line; i++)
-		{
-			for (j = 0; j < column; j++)
-				sum += *(matrix_1 + i * column + j) * *(matrix_2 + j * line + s);
-			*(output_matrix + i * line + s) = sum;
-			sum = 0;
-		}
-		s++;
-	} while (s < line);
+        for (i = 0; i < line; i++)
+		for (j = 0; j < column2; j++)
+			for (k = 0; k < column1; k++)
+			{
+                                sum += *(matrix_1 + i * column1 + k) * *(matrix_2 + k * column2 + j);
+	                 	*(output_matrix + i * column2 + j) = sum;
+		                sum = 0;
+		        }
 	return 0;
 }
-//AÕýÑÝ¾ØÕó
-//·´ÑÝ³õÖµm 0     
-//µü´ú´ÎÊýk<N
-//ÕýÔò»¯²ÎÊý0.6<miu<0.9
-//¾Û½¹Òò×Óe = 10e-10
-//m = WmÄæ*WeÄæ*mw
-//Aw = Wd*A*WmÄæ*WeÄæ
+//Aæ­£æ¼”çŸ©é˜µ
+//åæ¼”åˆå€¼m 0     
+//è¿­ä»£æ¬¡æ•°k<N
+//æ­£åˆ™åŒ–å‚æ•°0.6<miu<0.9
+//èšç„¦å› å­e = 10e-10
+//m = Wmé€†*Weé€†*mw
+//Aw = Wd*A*Wmé€†*Weé€†
 //dw = Wd*d
 //mw = We*Wm*m
-//Q = WeÄæµÄÆ½·½*AwµÄ×ªÖÃ*Aw+miu0*e*e*I
-//q = WeÄæµÄÆ½·½*AwµÄ×ªÖÃ*dw 
-//¦ÕÔÚmw0´¦µÄµ¼ÊýÎªf0 = Q*mw-q
-//ÑØmw0µÄ³õÊ¼ËÑË÷·½ÏòÑ¡ÔñÄ¿±êº¯Êý¦ÕµÄ×îËÙÏÂ½µ·½Ïòd0 = -f0
-//¶ÔÓ¦ËÑË÷²½³¤t = (d0×ªÖÃ*f0)/(d0×ªÖÃ*Q*d0)
-//±³¾°Ä£ÐÍmb = a  , db = Amb  ,d = dobs+db
+//Q = Weé€†çš„å¹³æ–¹*Awçš„è½¬ç½®*Aw+miu0*e*e*I
+//q = Weé€†çš„å¹³æ–¹*Awçš„è½¬ç½®*dw 
+//Ï†åœ¨mw0å¤„çš„å¯¼æ•°ä¸ºf0 = Q*mw-q
+//æ²¿mw0çš„åˆå§‹æœç´¢æ–¹å‘é€‰æ‹©ç›®æ ‡å‡½æ•°Ï†çš„æœ€é€Ÿä¸‹é™æ–¹å‘d0 = -f0
+//å¯¹åº”æœç´¢æ­¥é•¿t = (d0è½¬ç½®*f0)/(d0è½¬ç½®*Q*d0)
+//èƒŒæ™¯æ¨¡åž‹mb = a  , db = Amb  ,d = dobs+db
 
-//ÕýÑÝ´Å»¯Ç¿¶Èmc = 1A/m  ±³¾°´Å»¯Ç¿¶È1A/m   Ô¼ÊøM_min= 0 M_max = 2;
+//æ­£æ¼”ç£åŒ–å¼ºåº¦mc = 1A/m  èƒŒæ™¯ç£åŒ–å¼ºåº¦1A/m   çº¦æŸM_min= 0 M_max = 2;
 
-//×î´óµü´ú´ÎÊý
+//æœ€å¤§è¿­ä»£æ¬¡æ•°
 #define  Maximum_number_of_iterations 100
 
-//¾Û½¹Òò×Ó
+//èšç„¦å› å­
 #define e 10e-10
-//²ÎÊý G ºË¾ØÕó  ALL_T×Ü´ÅÒì³£  Ô¼ÊøÌõ¼þM_min= 0 M_max = 2
+//å‚æ•° G æ ¸çŸ©é˜µ  ALL_Tæ€»ç£å¼‚å¸¸  çº¦æŸæ¡ä»¶M_min= 0 M_max = 2
 double *Inversion(double* G, double* ALL_T, double M_max, double M_min)
 {
-	//µü´ú´ÎÊý
+	//è¿­ä»£æ¬¡æ•°
 	int Iterations = 0;
-	//Ñ­»·±äÁ¿
+	//å¾ªçŽ¯å˜é‡
 	int i, j;
-	//ÕýÔò»¯²ÎÊý
+	//æ­£åˆ™åŒ–å‚æ•°
 	double miu = 0.6;//(0.6~0.9)
 
 	double sum = 0;
 
-	//Êý¾Ý¼ÓÈ¨¾ØÕóWd;¾Û½¹È¨¾ØÕóWe;Ä£ÐÍ¼ÓÈ¨¾ØÕóWd;±³¾°Ä£ÐÍmb(´Å»¯Ç¿¶È£¬´Ë´¦Îª1A/m),dÎª¹Û²âÊý¾Ý;
+	//æ•°æ®åŠ æƒçŸ©é˜µWd;èšç„¦æƒçŸ©é˜µWe;æ¨¡åž‹åŠ æƒçŸ©é˜µWd;èƒŒæ™¯æ¨¡åž‹mb(ç£åŒ–å¼ºåº¦ï¼Œæ­¤å¤„ä¸º1A/m),dä¸ºè§‚æµ‹æ•°æ®;
 	//Gm = d
-	//ºË¾ØÕóG 441ÐÐ 4410ÁÐ
+	//æ ¸çŸ©é˜µG 441è¡Œ 4410åˆ—
 	double* Wd, * We, * Wm, * Aw, t0, beta;
 	Aw = (double*)malloc(sizeof(double) * 441*4410);
 	Wd = (double*)malloc(sizeof(double) * 441);	
@@ -68,8 +65,8 @@ double *Inversion(double* G, double* ALL_T, double M_max, double M_min)
 	Wm = (double*)malloc(sizeof(double) * 4410);
 	//double Wd[441], We[4410], Wm[4410],mb,d;
 	//We = diag(1/sqrt(m*m+e*e))
-	//Wd = diag(sqrt(A*A×ªÖÃ))
-	//Wm = diag(sqrt(A×ªÖÃ*A))
+	//Wd = diag(sqrt(A*Aè½¬ç½®))
+	//Wm = diag(sqrt(Aè½¬ç½®*A))
 
 	double* G_T = (double*)malloc(sizeof(double) * 4410 * 441);
 
@@ -102,7 +99,7 @@ double *Inversion(double* G, double* ALL_T, double M_max, double M_min)
 		for (j = 0; j < 441; j++)
 			*(G_T + 441 * i + j) = *(G + 4410 * j + i);
 
-	//We Wm Wd¼ÆËã
+	//We Wm Wdè®¡ç®—
 	
 	for (i = 0; i < 441; i++)
 	{
@@ -122,35 +119,35 @@ double *Inversion(double* G, double* ALL_T, double M_max, double M_min)
 	//m0w
 	
 	
-	//AwÓëAw_T
+	//Awä¸ŽAw_T
 	
 	
-	//¼ÆËãQ¾ØÕó
+	//è®¡ç®—QçŸ©é˜µ
 	
-	//¼ÆËãdw  dw = Wd * d;   441 441   441 1  =441 1
+	//è®¡ç®—dw  dw = Wd * d;   441 441   441 1  =441 1
 	for (i = 0; i < 441; i++)
 		*(dw + i) = *(ALL_T + i) * *(Wd + i);
-	//¼ÆËãq
+	//è®¡ç®—q
 	
 
-	//¼ÆËãf0 = Q*mw - q
+	//è®¡ç®—f0 = Q*mw - q
 
 
-	//¼ÆËãt0
+	//è®¡ç®—t0
 	do {
-		//¸üÐÂWe Óë mwk;
+		//æ›´æ–°We ä¸Ž mwk;
 		for (i = 0; i < 4410; i++){
 			We[i] = 1.0 / sqrt(m[i] * m[i] + e * e);
 			m[i] = We[i] * Wm[i] * m[i];
 		}
-		//¸üÐÂAw
+		//æ›´æ–°Aw
 		for (i = 0; i < 441; i++)
 			for (j = 0; j < 4410; j++)
 				*(Aw + i * 4410 + j) = *(G + i * 4410 + j) * *(Wd + i) * 1.0 / *(Wm + j) * 1.0 / *(We + j);
 		for (i = 0; i < 4410; i++)
 			for (j = 0; j < 441; j++)
 				*(Aw_T + i * 441 + j) = *(Aw + j * 4410 + i);
-		//¸üÐÂQ
+		//æ›´æ–°Q
 		Matrix_multiplication(Aw_T, Aw, Q, 4410, 441);
 		for (i = 0; i < 4410; i++)
 			for (j = 0; j < 4410; j++) {
@@ -158,7 +155,7 @@ double *Inversion(double* G, double* ALL_T, double M_max, double M_min)
 				while (i == j)
 					*(Q + i * 4410 + j) += miu * e * e;
 			}
-		//¸üÐÂq
+		//æ›´æ–°q
 		for (i = 0; i < 4410; i++) {
 			for (j = 0; j < 441; j++)
 				*(mid + i) += *(Aw_T + 441 * i + j) * *(dw + j);
@@ -208,4 +205,4 @@ double *Inversion(double* G, double* ALL_T, double M_max, double M_min)
 }
 
 
-//×ªÖÃÓë·Ç×ªÖÃ¾ØÕóÏà³Ë
+//è½¬ç½®ä¸Žéžè½¬ç½®çŸ©é˜µç›¸ä¹˜
